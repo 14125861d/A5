@@ -7,6 +7,7 @@ public class Join extends Operator{
 	private String joinPredicate;
 	private String commonAttr;
 	ArrayList<Tuple> tuples1;
+	private boolean fetch = false;
 
 	
 	//Join Constructor, join fill
@@ -16,10 +17,7 @@ public class Join extends Operator{
 		this.joinPredicate = joinPredicate;
 		newAttributeList = new ArrayList<Attribute>();
 		tuples1 = new ArrayList<Tuple>();
-		Tuple tuple;
-		while ((tuple = leftChild.next()) != null) {
-			tuples1.add(tuple);		
-		}
+
 	}
 
 	
@@ -30,6 +28,13 @@ public class Join extends Operator{
 	//The record after join with two tables
 	@Override
 	public Tuple next(){
+		if (!fetch) {
+			Tuple tuple;
+			while ((tuple = leftChild.next()) != null) {
+				tuples1.add(tuple);		
+			}
+			fetch = true;
+		}
 		if (rightChild.next() != null) {
 			findCommonAttr();
 			for (Attribute attr1: rightChild.getAttributeList()) {
